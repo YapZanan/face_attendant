@@ -427,11 +427,6 @@ QComboBox QListView{
 
 </string>
           </property>
-          <item>
-           <property name="text">
-            <string>Pilih Kamera</string>
-           </property>
-          </item>
          </widget>
         </item>
         <item>

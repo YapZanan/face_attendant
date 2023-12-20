@@ -3,7 +3,7 @@ from datetime import datetime
 
 import cv2
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QMessageBox, QComboBox
 from PyQt5.QtCore import Qt, QThread
 
 from webcam import CameraWorker
@@ -35,6 +35,25 @@ class UI(QMainWindow):
 
         self.button_check_out = self.findChild(QPushButton, 'buttonCheckOut')
         self.button_check_out.clicked.connect(self.check_out)
+
+        self.combo_box_camera = self.findChild(QComboBox, 'comboBoxCamera')
+
+        self.list_cameras()
+        self.combo_box_camera.currentIndexChanged.connect(self.update_camera)
+
+    def list_cameras(self):
+        for i in range(10):  # Assume up to 10 cameras, adjust as needed
+            cap = cv2.VideoCapture(i)
+            if not cap.isOpened():
+                break
+            print(f"Camera {i}")
+            self.combo_box_camera.addItem(f"Camera {i}")
+
+            cap.release()
+
+    def update_camera(self):
+        selected_camera_index = self.combo_box_camera.currentIndex()
+        self.camera_worker.set_camera(selected_camera_index)
 
     def setup_camera_thread(self):
         self.label_camera = self.findChild(QLabel, 'labelCamera')
@@ -68,7 +87,8 @@ class UI(QMainWindow):
                     message = f"Anda sudah {check_type} hari ini"
                     success_message = QMessageBox.Warning
 
-                self.show_unknown_message(success_message, message, "Warning" if success_message == QMessageBox.Warning else "Success")
+                self.show_unknown_message(success_message, message,
+                                          "Warning" if success_message == QMessageBox.Warning else "Success")
                 if success_message == QMessageBox.Warning:
                     print(f"You have already {check_type.lower()} today.")
             else:
