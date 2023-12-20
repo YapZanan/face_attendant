@@ -1,0 +1,703 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>887</width>
+    <height>791</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="1">
+     <layout class="QVBoxLayout" name="verticalLayout_5">
+      <item>
+       <widget class="QLabel" name="labelCamera">
+        <property name="minimumSize">
+         <size>
+          <width>480</width>
+          <height>480</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QLabel {
+    font: 87 12pt &quot;Montserrat Black&quot;;
+    letter-spacing: 2px; /* Add extra space between characters */
+    background: rgb(255, 255, 255); /* Primary color */
+    border-radius: 16px; /* Adjust the radius as needed */
+    color: white; /* Text color */
+}</string>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>8</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>8</number>
+        </property>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>13</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="buttonCheckIn">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+            <horstretch>1</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>208</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>219</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="sizeIncrement">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>208</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    font: 87 12pt &quot;Montserrat Black&quot;;
+    letter-spacing: 2px; /* Add extra space between characters */
+    background: rgb(96, 112, 173); /* Updated primary color */
+    border-radius: 8px; /* Adjust the radius as needed */
+    color: white; /* Text color */
+}
+
+QPushButton:hover {
+    background: rgb(77, 91, 146); /* Darker color on hover */
+}
+
+QPushButton:pressed {
+    background: rgb(59, 72, 123); /* Darker color when pressed */
+}
+</string>
+          </property>
+          <property name="text">
+           <string>Check-In</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_6">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>32</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="buttonCheckOut">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+            <horstretch>1</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>208</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>219</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="sizeIncrement">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>208</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    font: 87 12pt &quot;Montserrat Black&quot;;
+    letter-spacing: 2px; /* Add extra space between characters */
+    background: rgb(96, 112, 173); /* Updated primary color */
+    border-radius: 8px; /* Adjust the radius as needed */
+    color: white; /* Text color */
+}
+
+QPushButton:hover {
+    background: rgb(77, 91, 146); /* Darker color on hover */
+}
+
+QPushButton:pressed {
+    background: rgb(59, 72, 123); /* Darker color when pressed */
+}
+</string>
+          </property>
+          <property name="text">
+           <string>Check-Out</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>13</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="2">
+     <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>16</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="0">
+     <spacer name="horizontalSpacer_4">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>8</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="4">
+     <spacer name="horizontalSpacer_5">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>8</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="3">
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="sizeConstraint">
+       <enum>QLayout::SetMaximumSize</enum>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="spacing">
+         <number>8</number>
+        </property>
+        <property name="sizeConstraint">
+         <enum>QLayout::SetFixedSize</enum>
+        </property>
+        <item>
+         <spacer name="verticalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>16</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="labelHours">
+          <property name="minimumSize">
+           <size>
+            <width>240</width>
+            <height>80</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>290</width>
+            <height>80</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel {
+    font: 87 16pt &quot;Montserrat Black&quot;;
+    letter-spacing: 2px; /* Add extra space between characters */
+    background: rgb(96, 112, 173); /* Updated primary color */
+    border-radius: 8px; /* Adjust the radius as needed */
+    color: white; /* Text color */
+}</string>
+          </property>
+          <property name="text">
+           <string>19:00:12</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="labelDate">
+          <property name="minimumSize">
+           <size>
+            <width>240</width>
+            <height>80</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>290</width>
+            <height>80</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel {
+    font: 87 16pt &quot;Montserrat Black&quot;;
+    letter-spacing: 2px; /* Add extra space between characters */
+    background: rgb(96, 112, 173); /* Updated primary color */
+    border-radius: 8px; /* Adjust the radius as needed */
+    color: white; /* Text color */
+}</string>
+          </property>
+          <property name="text">
+           <string>03 Agustus 2023</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="spacing">
+         <number>8</number>
+        </property>
+        <property name="sizeConstraint">
+         <enum>QLayout::SetFixedSize</enum>
+        </property>
+        <item>
+         <spacer name="verticalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Maximum</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>16</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboBoxCamera">
+          <property name="minimumSize">
+           <size>
+            <width>240</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>290</width>
+            <height>36</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QComboBox{
+	border: 1px solid rgb(190, 175, 132);
+	border-radius: 4px;
+	padding-left: 8px;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	padding-right: 8px
+}
+
+QComboBox:drop-down{
+	border: 0px
+}
+
+QComboBox:down-arrow{
+	image: url(:/newPrefix/resource/icons8-arrow-down-50 (1).png);
+	margin-right: 32px;
+    heidth:100px;
+    width:100px;
+}
+
+QComboBox QListView{
+	font-size: 12px;
+	border: 1px solid rgb(0, 0, 0, 10%);
+	padding: 5px;
+	background-color: #fff;
+	outline: 0px;
+	border-radius: 4px;
+}
+
+</string>
+          </property>
+          <item>
+           <property name="text">
+            <string>Pilih Kamera</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboBoxModel">
+          <property name="minimumSize">
+           <size>
+            <width>240</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>290</width>
+            <height>36</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QComboBox{
+	border: 1px solid rgb(190, 175, 132);
+	border-radius: 4px;
+	padding-left: 8px;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	padding-right: 8px
+}
+
+QComboBox:drop-down{
+	border: 0px
+}
+
+QComboBox:down-arrow{
+	image: url(:/newPrefix/resource/icons8-arrow-down-50 (1).png);
+	margin-right: 32px;
+    heidth:100px;
+    width:100px;
+}
+
+QComboBox QListView{
+	font-size: 12px;
+	border: 1px solid rgb(0, 0, 0, 10%);
+	padding: 5px;
+	background-color: #fff;
+	outline: 0px;
+	border-radius: 4px;
+}
+
+</string>
+          </property>
+          <item>
+           <property name="text">
+            <string>Pilih Model</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Maximum</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>16</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="spacing">
+         <number>8</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="buttonDownloadLog">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+            <horstretch>1</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>208</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>290</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="sizeIncrement">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>208</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    font: 87 12pt &quot;Montserrat Black&quot;;
+    letter-spacing: 2px; /* Add extra space between characters */
+    background: rgb(205, 161, 163); /* Updated primary color */
+    border-radius: 8px; /* Adjust the radius as needed */
+    color: white; /* Text color */
+}
+
+QPushButton:hover {
+    background: rgb(189, 148, 150); /* Darker color on hover */
+}
+
+QPushButton:pressed {
+    background: rgb(112, 88, 89); /* Darker color when pressed */
+}
+</string>
+          </property>
+          <property name="text">
+           <string>Download Log</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="buttonTrainNewData">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+            <horstretch>1</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>208</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>290</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="sizeIncrement">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>208</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    font: 87 12pt &quot;Montserrat Black&quot;;
+    letter-spacing: 2px; /* Add extra space between characters */
+    background: rgb(205, 161, 163); /* Updated primary color */
+    border-radius: 8px; /* Adjust the radius as needed */
+    color: white; /* Text color */
+}
+
+QPushButton:hover {
+    background: rgb(189, 148, 150); /* Darker color on hover */
+}
+
+QPushButton:pressed {
+    background: rgb(112, 88, 89); /* Darker color when pressed */
+}
+</string>
+          </property>
+          <property name="text">
+           <string>Train New Data</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QListView" name="listViewLog">
+          <property name="maximumSize">
+           <size>
+            <width>240</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QListView {\n    font: 87 12pt &quot;Montserrat Black&quot;;\n    letter-spacing: 2px; /* Add extra space between characters */\n    background: rgb(255, 255, 255); /* Primary color */\n    border-radius: 16px; /* Adjust the radius as needed */\n    color: white; /* Text color */\n}</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="1" colspan="3">
+     <spacer name="verticalSpacer_7">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>16</width>
+        <height>16</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="2" column="1" colspan="3">
+     <spacer name="verticalSpacer_6">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>16</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>887</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
