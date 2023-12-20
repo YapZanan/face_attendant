@@ -6,16 +6,18 @@ import face_recognition
 
 from FaceRecognizer import FaceRecognizer
 
-
 class CameraWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(QPixmap)
 
-    def __init__(self, json_filename="output_encodings.json", ConfidenceLevel=0.6):
+    CONFIDENCE_LEVEL = 0.6
+    RECTANGLE_COLORS = {"Unknown": (0, 0, 255), "Known": (0, 255, 0)}
+
+    def __init__(self, json_filename="output_encodings.json"):
         super().__init__()
-        self.ConfidenceLevel = ConfidenceLevel
         self.recognizer = FaceRecognizer(json_filename)
         self.video_capture = cv2.VideoCapture(0)
+        self.current_frame = None  # Added attribute to store the current frame
 
     def process_frame(self, frame):
         small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
@@ -24,20 +26,29 @@ class CameraWorker(QObject):
         face_locations = face_recognition.face_locations(rgb_small_frame)
         face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
+        face_names, face_nameids = self.recognize_faces(face_encodings)
+
+        return face_locations, face_names, face_nameids
+
+    def recognize_faces(self, face_encodings):
         face_names = []
+        face_nameids = []
+
         for face_encoding in face_encodings:
-            name = self.recognize_face(face_encoding)
-            face_names.append(name)
+            recognition_results = self.recognizer.recognize_face(face_encoding)
+            if recognition_results:
+                result = recognition_results[0]
+                if result['confidence'] >= self.CONFIDENCE_LEVEL:
+                    face_names.append(result['name'])
+                    face_nameids.append(result['numberid'])
+                else:
+                    face_names.append("Unknown")
+                    face_nameids.append("Unknown")
+            else:
+                face_names.append("Unknown")
+                face_nameids.append("Unknown")
 
-        return face_locations, face_names
-
-    def recognize_face(self, face_encoding):
-        recognition_results = self.recognizer.recognize_face(face_encoding)
-        if recognition_results:
-            result = recognition_results[0]
-            if result['confidence'] >= self.ConfidenceLevel:
-                return result['name']
-        return "Unknown"
+        return face_names, face_nameids
 
     def display_results(self, frame, face_locations, face_names):
         for (top, right, bottom, left), name in zip(face_locations, face_names):
@@ -46,19 +57,12 @@ class CameraWorker(QObject):
             bottom *= 4
             left *= 4
 
-            if name == "Unknown":
-                # Draw a red rectangle for unknown faces
-                cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
-                text_bg_color = (0, 0, 255)  # Red background for unknown faces
-            else:
-                # Draw a green rectangle for known faces
-                cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
-                text_bg_color = (0, 255, 0)  # Green background for known faces
+            rectangle_color = self.RECTANGLE_COLORS.get(name, (0, 0, 255))
+            text_bg_color = rectangle_color  # Set text background color based on rectangle color
 
-            label = f"{name}"
+            cv2.rectangle(frame, (left, top), (right, bottom), rectangle_color, 2)
             cv2.rectangle(frame, (left, bottom - 35), (right, bottom), text_bg_color, cv2.FILLED)
-            font = cv2.FONT_HERSHEY_DUPLEX
-            cv2.putText(frame, label, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 5)
+            cv2.putText(frame, f"{name}", (left + 6, bottom - 6), cv2.FONT_HERSHEY_DUPLEX, 1.0, (255, 255, 255), 5)
 
         pixmap = self.frame_to_pixmap(frame)
         self.progress.emit(pixmap)
@@ -71,15 +75,10 @@ class CameraWorker(QObject):
     def run(self):
         while True:
             ret, frame = self.video_capture.read()
+            self.current_frame = frame  # Update current_frame attribute
 
-            face_locations, face_names = self.process_frame(frame)
+            face_locations, face_names, nameids = self.process_frame(frame)
             self.display_results(frame, face_locations, face_names)
-
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-
-        self.video_capture.release()
-        cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
