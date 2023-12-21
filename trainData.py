@@ -4,8 +4,10 @@ from datetime import datetime
 
 import face_recognition
 import numpy as np
+from PyQt5.QtCore import pyqtSignal, QObject
+from PyQt5.QtGui import QPixmap
 
-3
+
 def extract_name_and_numberid(filename):
     # Assuming the filename format is "name_numberid.jpg"
     name, rest = filename.split('_', 1)
@@ -19,10 +21,15 @@ def get_face_encodings(image_path):
     return face_encodings
 
 
-class FaceEncodingScanner:
-    def __init__(self, folder_path):
-        self.folder_path = folder_path
+class FaceEncodingScanner(QObject):
+    finished = pyqtSignal()
+    progress = pyqtSignal(QPixmap)
+
+    def __init__(self):
+        super().__init__()
+        self.folder_path = "images"
         self.face_encodings_data = []
+        # self.json_filename =   # Make json_filename an instance variable
 
     def process_images(self):
         # Iterate over each file in the folder
@@ -41,19 +48,15 @@ class FaceEncodingScanner:
                 self.face_encodings_data.append(
                     {'name': name, 'numberid': numberid, 'encodings': encodings_array.tolist()})
 
-    def save_to_json(self, json_filename):
+    def save_to_json(self, json_name):
         date = datetime.now().strftime("%Y%m%d")
         time = datetime.now().strftime("%H%M%S")
-        print(json_filename+date+time+".json")
-        with open(json_filename+date+time+".json", 'w') as jsonfile:
+        json_filename_with_timestamp = f"{json_name}_{date}_{time}.json"
+
+        with open(json_filename_with_timestamp, 'w') as jsonfile:
             json.dump(self.face_encodings_data, jsonfile, default=lambda x: x.tolist())
 
-
-# Example usage
-if __name__ == "__main__":
-    folder_path = "images"
-    json_filename = "model/output_encodings"
-
-    scanner = FaceEncodingScanner(folder_path)
-    scanner.process_images()
-    scanner.save_to_json(json_filename)
+    def run(self, json_name):
+        self.process_images()
+        self.save_to_json(json_name)
+        self.finished.emit()

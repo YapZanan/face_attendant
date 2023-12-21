@@ -1,12 +1,18 @@
 import json
 import face_recognition
 
-from trainData import get_face_encodings
+# from trainData import get_face_encodings
 
 
 class FaceRecognizer:
     def __init__(self, json_filename):
         self.json_filename = json_filename
+        self.face_encodings_data = self.load_json_data()
+
+    def load_model(self, model_filename):
+        # Implement the logic to load the model from the given file
+        # For example, you might want to update self.json_filename and call load_json_data
+        self.json_filename = model_filename
         self.face_encodings_data = self.load_json_data()
 
     def load_json_data(self):
@@ -38,7 +44,7 @@ class FaceRecognizer:
 
 # Example usage
 if __name__ == "__main__":
-    json_filename = "output_encodings.json"
+    json_filename = "model/output_encodings.json"
     test_image_path = "images/jokowi_14.jpg"
 
     recognizer = FaceRecognizer(json_filename)

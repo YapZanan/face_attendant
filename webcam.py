@@ -13,13 +13,16 @@ class CameraWorker(QObject):
     CONFIDENCE_LEVEL = 0.6
     RECTANGLE_COLORS = {"Unknown": (0, 0, 255), "Known": (0, 255, 0)}
 
-    def __init__(self, json_filename="output_encodings.json"):
+    def __init__(self, json_filename="model/output_encodings.json"):
         super().__init__()
         self.recognizer = FaceRecognizer(json_filename)
         self.video_capture = None
         # self.aa = camera
         self.current_frame = None  # Added attribute to store the current frame
 
+    def set_model(self, model_filename):
+        self.recognizer.load_model(model_filename)
+        print(model_filename)
     def set_camera(self, camera_index):
         if self.video_capture is not None:
             self.video_capture.release()  # Release the previous camera

@@ -31,6 +31,10 @@ class UI(QMainWindow):
         uic.loadUi("123.ui", self)
         self.setup_camera_thread()
 
+        self.train_worker = FaceEncodingScanner()
+        self.train_thread = QThread()
+        self.setup_train_thread()
+
         self.button_check_in = self.findChild(QPushButton, 'buttonCheckIn')
         self.button_check_in.clicked.connect(self.check_in)
 
@@ -45,6 +49,8 @@ class UI(QMainWindow):
 
         self.combo_box_camera.currentIndexChanged.connect(self.update_camera)
 
+        self.combo_box_model.currentIndexChanged.connect(self.update_model)
+
 
         self.button_train_data = self.findChild(QPushButton, 'buttonTrainNewData')
         self.button_train_data.clicked.connect(self.train_data)
@@ -56,6 +62,13 @@ class UI(QMainWindow):
         self.listview_log.setModel(self.model)
         # self.add_item("item1")
 
+    def list_model(self):
+        self.combo_box_model.clear()
+        for filename in os.listdir("model"):
+            if filename.endswith(".json"):
+                print(filename)
+                self.combo_box_model.addItem(filename)
+
     def add_item(self, item):
         # Get the current string list
         string_list = self.model.stringList()
@@ -65,32 +78,27 @@ class UI(QMainWindow):
 
         # Update the model with the modified list
         self.model.setStringList(string_list)
+
     def train_data(self):
-        folder_path = "images"
         json_filename = "model/output_encodings"
 
-        scanner = FaceEncodingScanner(folder_path)
-        scanner.process_images()
-        scanner.save_to_json(json_filename)
+        self.train_worker.run(json_filename)
         self.list_model()
-        print("success")
+        print("Processing started")
+
     def list_cameras(self):
         for i in range(10):  # Assume up to 10 cameras, adjust as needed
             cap = cv2.VideoCapture(i)
             if not cap.isOpened():
                 break
             print(f"Camera {i}")
-            self.combo_box_model.addItem(f"Camera {i}")
+            self.combo_box_camera.addItem(f"Camera {i}")
 
             cap.release()
 
-    def list_model(self):
-        self.combo_box_camera.clear()
-        for filename in os.listdir("model"):
-            if filename.endswith(".json"):
-                print(filename)
-                self.combo_box_camera.addItem(filename)
-
+    def update_model(self):
+        selected_model_index = self.combo_box_model.currentText()
+        self.camera_worker.set_model(selected_model_index)
 
     def update_camera(self):
         selected_camera_index = self.combo_box_camera.currentIndex()
@@ -104,6 +112,14 @@ class UI(QMainWindow):
                      self.camera_thread.quit,
                      self.camera_worker.deleteLater,
                      self.set_label_camera)
+
+    def setup_train_thread(self):
+        setup_thread(self.train_worker,
+                     self.train_thread,
+                     self.train_worker.run,
+                     self.train_thread.quit,
+                     self.train_worker.deleteLater,
+                     self.train_data)
 
     def set_label_camera(self, pixmap):
         pixmap = pixmap.scaled(self.label_camera.size(), Qt.KeepAspectRatio)
