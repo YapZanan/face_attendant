@@ -3,9 +3,10 @@ from datetime import datetime
 
 import cv2
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QMessageBox, QComboBox
-from PyQt5.QtCore import Qt, QThread
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QMessageBox, QComboBox, QListView
+from PyQt5.QtCore import Qt, QThread, QStringListModel
 
+from trainData import FaceEncodingScanner
 from webcam import CameraWorker
 import csv
 
@@ -37,19 +38,59 @@ class UI(QMainWindow):
         self.button_check_out.clicked.connect(self.check_out)
 
         self.combo_box_camera = self.findChild(QComboBox, 'comboBoxCamera')
+        self.combo_box_model = self.findChild(QComboBox, 'comboBoxModel')
 
         self.list_cameras()
+        self.list_model()
+
         self.combo_box_camera.currentIndexChanged.connect(self.update_camera)
 
+
+        self.button_train_data = self.findChild(QPushButton, 'buttonTrainNewData')
+        self.button_train_data.clicked.connect(self.train_data)
+
+        # self.listview_log = QListView(self)
+        self.model = QStringListModel()
+
+        self.listview_log = self.findChild(QListView, 'listViewLog')
+        self.listview_log.setModel(self.model)
+        # self.add_item("item1")
+
+    def add_item(self, item):
+        # Get the current string list
+        string_list = self.model.stringList()
+
+        # Add the new item to the list
+        string_list.append(item)
+
+        # Update the model with the modified list
+        self.model.setStringList(string_list)
+    def train_data(self):
+        folder_path = "images"
+        json_filename = "model/output_encodings"
+
+        scanner = FaceEncodingScanner(folder_path)
+        scanner.process_images()
+        scanner.save_to_json(json_filename)
+        self.list_model()
+        print("success")
     def list_cameras(self):
         for i in range(10):  # Assume up to 10 cameras, adjust as needed
             cap = cv2.VideoCapture(i)
             if not cap.isOpened():
                 break
             print(f"Camera {i}")
-            self.combo_box_camera.addItem(f"Camera {i}")
+            self.combo_box_model.addItem(f"Camera {i}")
 
             cap.release()
+
+    def list_model(self):
+        self.combo_box_camera.clear()
+        for filename in os.listdir("model"):
+            if filename.endswith(".json"):
+                print(filename)
+                self.combo_box_camera.addItem(filename)
+
 
     def update_camera(self):
         selected_camera_index = self.combo_box_camera.currentIndex()
@@ -83,10 +124,12 @@ class UI(QMainWindow):
                     self.save_to_csv(first_face_name, id, check_type)
                     message = f"{first_face_name} berhasil {check_type}!"
                     success_message = QMessageBox.Information
+                    self.add_item(message)
+                    # self.listview_log.
                 else:
                     message = f"Anda sudah {check_type} hari ini"
                     success_message = QMessageBox.Warning
-
+                    self.add_item(message)
                 self.show_unknown_message(success_message, message,
                                           "Warning" if success_message == QMessageBox.Warning else "Success")
                 if success_message == QMessageBox.Warning:
@@ -94,6 +137,7 @@ class UI(QMainWindow):
             else:
                 print("No Face Detected")
                 self.show_unknown_message(QMessageBox.Warning, "Wajah tidak terdeteksi", "Warning")
+
 
     def check_out(self):
         self.process_frame_and_show_message("Check-Out")

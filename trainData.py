@@ -1,5 +1,7 @@
 import os
 import json
+from datetime import datetime
+
 import face_recognition
 import numpy as np
 
@@ -40,14 +42,17 @@ class FaceEncodingScanner:
                     {'name': name, 'numberid': numberid, 'encodings': encodings_array.tolist()})
 
     def save_to_json(self, json_filename):
-        with open(json_filename, 'w') as jsonfile:
+        date = datetime.now().strftime("%Y%m%d")
+        time = datetime.now().strftime("%H%M%S")
+        print(json_filename+date+time+".json")
+        with open(json_filename+date+time+".json", 'w') as jsonfile:
             json.dump(self.face_encodings_data, jsonfile, default=lambda x: x.tolist())
 
 
 # Example usage
 if __name__ == "__main__":
     folder_path = "images"
-    json_filename = "output_encodings.json"
+    json_filename = "model/output_encodings"
 
     scanner = FaceEncodingScanner(folder_path)
     scanner.process_images()
