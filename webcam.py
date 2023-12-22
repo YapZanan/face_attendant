@@ -18,15 +18,36 @@ class CameraWorker(QObject):
         self.recognizer = FaceRecognizer(json_filename)
         self.video_capture = None
         # self.aa = camera
+        self.camera_index = None  # Add the camera_index attribute
         self.current_frame = None  # Added attribute to store the current frame
 
     def set_model(self, model_filename):
-        self.recognizer.load_model(model_filename)
-        print(model_filename)
-    def set_camera(self, camera_index):
+        # if self.video_capture is not None:
+        #     self.video_capture.release()  # Release the camera resources
+        #     self.video_capture = None  # Set to None to handle the error gracefully
+
+        print(f"Loading model: {model_filename}")
+        try:
+            success = self.recognizer.load_model(model_filename)
+            if success:
+                print(f"Model loaded successfully.")
+                if self.camera_index is not None:
+                    # Reinitialize the video capture with the new model and camera index
+                    self.video_capture = cv2.VideoCapture(self.camera_index)
+                    if not self.video_capture.isOpened():
+                        print(f"Error: Unable to open camera {self.camera_index}")
+                        self.video_capture = None  # Set to None to handle the error gracefully
+            else:
+                print(f"Error: Failed to load model {model_filename}")
+        except Exception as e:
+            print(f"Error loading model: {e}")
+
+    def set_camera(self, camera_index=0):
         if self.video_capture is not None:
             self.video_capture.release()  # Release the previous camera
+            self.video_capture = None  # Set to None to handle the error gracefully
 
+        self.camera_index = camera_index  # Update the camera_index attribute
         self.video_capture = cv2.VideoCapture(camera_index)
         if not self.video_capture.isOpened():
             print(f"Error: Unable to open camera {camera_index}")
@@ -72,7 +93,12 @@ class CameraWorker(QObject):
             bottom *= 4
             left *= 4
 
-            rectangle_color = self.RECTANGLE_COLORS.get(name, (0, 0, 255))
+            if name in self.RECTANGLE_COLORS:
+                rectangle_color = self.RECTANGLE_COLORS[name]
+            else:
+                # Set a default color for names that are not "Unknown" or "Known"
+                rectangle_color = (255, 0, 0)  # Set to blue for example
+
             text_bg_color = rectangle_color  # Set text background color based on rectangle color
 
             cv2.rectangle(frame, (left, top), (right, bottom), rectangle_color, 2)
@@ -89,8 +115,10 @@ class CameraWorker(QObject):
 
     def run(self):
         while True:
-            # print(self.video_capture)
+            # print("video_capture")
+
             if self.video_capture:
+                # print("video_captureeee")
                 ret, frame = self.video_capture.read()
                 self.current_frame = frame  # Update current_frame attribute
                 if frame is not None and frame.any():

@@ -11,13 +11,17 @@ class FaceRecognizer:
 
     def load_model(self, model_filename):
         # Implement the logic to load the model from the given file
-        # For example, you might want to update self.json_filename and call load_json_data
-        self.json_filename = model_filename
-        self.face_encodings_data = self.load_json_data()
+        self.json_filename = f"{model_filename}"
+        try:
+            self.face_encodings_data = self.load_json_data()
+            print("Model data loaded successfully.")
+        except Exception as e:
+            print(f"Error loading model data: {e}")
 
     def load_json_data(self):
         with open(self.json_filename, 'r') as jsonfile:
             face_encodings_data = json.load(jsonfile)
+            print(face_encodings_data)
         return face_encodings_data
 
     def recognize_face(self, trained_encodings, tolerance=0.6):

@@ -309,7 +309,7 @@ QPushButton:pressed {
           </property>
           <property name="styleSheet">
            <string notr="true">QLabel {
-    font: 87 16pt &quot;Montserrat Black&quot;;
+    font: 87 12pt &quot;Montserrat Black&quot;;
     letter-spacing: 2px; /* Add extra space between characters */
     background: rgb(96, 112, 173); /* Updated primary color */
     border-radius: 8px; /* Adjust the radius as needed */
@@ -340,7 +340,7 @@ QPushButton:pressed {
           </property>
           <property name="styleSheet">
            <string notr="true">QLabel {
-    font: 87 16pt &quot;Montserrat Black&quot;;
+    font: 87 12pt &quot;Montserrat Black&quot;;
     letter-spacing: 2px; /* Add extra space between characters */
     background: rgb(96, 112, 173); /* Updated primary color */
     border-radius: 8px; /* Adjust the radius as needed */

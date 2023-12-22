@@ -4,12 +4,14 @@ from datetime import datetime
 import cv2
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QMessageBox, QComboBox, QListView
-from PyQt5.QtCore import Qt, QThread, QStringListModel
+from PyQt5.QtCore import Qt, QThread, QStringListModel, QTime, QDate, QTimer
 
 from trainData import FaceEncodingScanner
 from webcam import CameraWorker
 import csv
-
+import pandas as pd
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
 
 def setup_thread(worker, thread, run_method, finished_method, delete_later_method, progress_method):
     worker.moveToThread(thread)
@@ -60,7 +62,68 @@ class UI(QMainWindow):
 
         self.listview_log = self.findChild(QListView, 'listViewLog')
         self.listview_log.setModel(self.model)
+
+        self.label_hours = self.findChild(QLabel, 'labelHours')
+        self.label_date = self.findChild(QLabel, 'labelDate')
+
+        self.update_labels()
+
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_labels)
+        self.timer.start(1000)
+
+        self.button_download = self.findChild(QPushButton, 'buttonDownloadLog')
+        self.button_download.clicked.connect(self.csv_to_pdf)
+
         # self.add_item("item1")
+
+    def csv_to_pdf(self, csv_file='attendance_records.csv', pdf_file='attendance_records.pdf'):
+        # Read CSV file using pandas
+        df = pd.read_csv('attendance_records.csv')
+
+        # Create PDF
+        # Get the user's home directory
+        desktop_folder = os.path.join(os.path.expanduser('~'), 'Desktop')
+
+        # Create the full path for the PDF file on the desktop
+        pdf_file_path = os.path.join(desktop_folder, pdf_file)
+
+        # Create PDF
+        c = canvas.Canvas(pdf_file_path, pagesize=letter)
+        width, height = letter
+
+        # Set column widths based on the number of columns in the CSV
+        col_widths = [width / len(df.columns)] * len(df.columns)
+
+        # Define cell heights and table start y-coordinate
+        row_height = 12
+        table_start_y = height - 50
+
+        # Write column headers
+        for i, column in enumerate(df.columns):
+            c.drawString(i * col_widths[i], table_start_y, column)
+
+        # Draw table outline
+        c.rect(0, table_start_y - row_height, width, row_height * (len(df) + 1))
+
+        # Write data rows
+        for i, (_, row) in enumerate(df.iterrows()):
+            for j, value in enumerate(row):
+                c.drawString(j * col_widths[j], table_start_y - (i + 2) * row_height, str(value))
+
+            # Draw horizontal lines for each row
+            c.line(0, table_start_y - (i + 2) * row_height, width, table_start_y - (i + 2) * row_height)
+        print("success")
+        c.save()
+
+    def update_labels(self):
+        # Get the current time and date
+        current_time = QTime.currentTime().toString(Qt.DefaultLocaleLongDate)
+        current_date = QDate.currentDate().toString(Qt.DefaultLocaleLongDate)
+
+        # Update the labels with the current time and date
+        self.label_hours.setText(f"{current_time}")
+        self.label_date.setText(f"{current_date}")
 
     def list_model(self):
         self.combo_box_model.clear()
@@ -80,11 +143,9 @@ class UI(QMainWindow):
         self.model.setStringList(string_list)
 
     def train_data(self):
-        json_filename = "model/output_encodings"
-
-        self.train_worker.run(json_filename)
         self.list_model()
-        print("Processing started")
+
+        self.train_thread.start()
 
     def list_cameras(self):
         for i in range(10):  # Assume up to 10 cameras, adjust as needed
@@ -98,7 +159,8 @@ class UI(QMainWindow):
 
     def update_model(self):
         selected_model_index = self.combo_box_model.currentText()
-        self.camera_worker.set_model(selected_model_index)
+        # print(selected_model_index)
+        self.camera_worker.set_model(f"model/{selected_model_index}")
 
     def update_camera(self):
         selected_camera_index = self.combo_box_camera.currentIndex()
@@ -114,12 +176,12 @@ class UI(QMainWindow):
                      self.set_label_camera)
 
     def setup_train_thread(self):
-        setup_thread(self.train_worker,
-                     self.train_thread,
-                     self.train_worker.run,
-                     self.train_thread.quit,
-                     self.train_worker.deleteLater,
-                     self.train_data)
+        self.train_worker.moveToThread(self.train_thread)
+        self.train_thread.started.connect(self.train_worker.process_images)
+        self.train_worker.finished.connect(self.train_thread.quit)
+        self.train_worker.finished.connect(self.train_worker.deleteLater)
+        self.train_thread.finished.connect(self.train_thread.deleteLater)
+        self.train_worker.progress.connect(self.train_data)
 
     def set_label_camera(self, pixmap):
         pixmap = pixmap.scaled(self.label_camera.size(), Qt.KeepAspectRatio)
@@ -136,14 +198,13 @@ class UI(QMainWindow):
 
             if first_face_name != "Unknown":
                 if not self.already_checked(id, check_type):
-                    self.save_image(current_frame, first_face_name, id)
+                    self.save_image(current_frame, first_face_name, id, check_type)
                     self.save_to_csv(first_face_name, id, check_type)
                     message = f"{first_face_name} berhasil {check_type}!"
                     success_message = QMessageBox.Information
                     self.add_item(message)
-                    # self.listview_log.
                 else:
-                    message = f"Anda sudah {check_type} hari ini"
+                    message = f"{first_face_name} sudah {check_type} hari ini"
                     success_message = QMessageBox.Warning
                     self.add_item(message)
                 self.show_unknown_message(success_message, message,
@@ -196,14 +257,14 @@ class UI(QMainWindow):
         msg.setWindowTitle(title)
         msg.exec_()
 
-    def save_image(self, frame, name, id):
+    def save_image(self, frame, name, id, status):
         # Create a folder named "face_images" if it doesn't exist
         folder_path = "face_images"
         os.makedirs(folder_path, exist_ok=True)
 
         # Generate a unique filename based on name, hours, and date
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"{name}_{id}_{timestamp}.png"
+        filename = f"{name}_{id}_{status}_{timestamp}.png"
 
         # Save the image in the "face_images" folder
         filepath = os.path.join(folder_path, filename)
